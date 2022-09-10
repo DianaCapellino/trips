@@ -1,0 +1,2 @@
+install Django
+install django-multiselectfield
