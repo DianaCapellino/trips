@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.forms import ModelForm
 from django.conf import settings
 from multiselectfield import MultiSelectField
+import django.utils.timezone
 
 
 ATTRACTIONS = [
@@ -81,7 +82,6 @@ class Destination(models.Model):
 
 class TripData(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owner_user")
-    name = models.CharField(max_length=100)
     are_children = models.BooleanField(default=False)
     max_age = models.PositiveSmallIntegerField()
     num_pax = models.PositiveSmallIntegerField()
@@ -92,19 +92,15 @@ class TripData(models.Model):
     visited_destinations = models.ManyToManyField(Destination, related_name="visited")
     hotel_quality_selected = MultiSelectField(choices=HOTEL_QUALITY_OPTIONS)
 
-    def __str__(self):
-        return f"{self.name}"
-
 
 class Excursion(models.Model):
     destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name="excursions")
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=800)
-    picture1 = models.CharField(max_length=500)
+    description = models.CharField(max_length=1500)
+    pic1_url = models.CharField(max_length=500)
     pic2_url = models.CharField(max_length=500)
     pic3_url = models.CharField(max_length=500)
     season = MultiSelectField(choices=SEASONS)
-    atractions = MultiSelectField(choices=ATTRACTIONS)
     interests = MultiSelectField(choices=INTERESTS)
     min_age = models.PositiveSmallIntegerField()
     max_age = models.PositiveSmallIntegerField()
@@ -126,3 +122,39 @@ class Hotel(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
+
+class TripExcursions(models.Model):
+    dayInTrip = models.PositiveSmallIntegerField()
+    excursion = models.ForeignKey(Excursion, on_delete=models.CASCADE, related_name="destination_excursions")
+
+
+class TripDestination(models.Model):
+    destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name="destination")
+    nights = models.PositiveSmallIntegerField()
+    excursions = models.ForeignKey(TripExcursions, on_delete=models.CASCADE, related_name="destination_excursions")
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name="stay")
+    orderInTrip = models.PositiveSmallIntegerField()
+
+
+class Trip(models.Model):
+    name = models.CharField(max_length=100)
+    destinations = models.ManyToManyField(TripDestination, related_name="trip_destinations")
+    nights = models.PositiveSmallIntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="trip_user")
+    shared_with = models.ManyToManyField(User, related_name="companions_trip")
+    start_date = models.DateTimeField(default=django.utils.timezone.now, verbose_name='start_date')
+    finish_date = models.DateTimeField(default=django.utils.timezone.now, verbose_name='finish_date')
+
+    def __str__(self):
+        return f"{self.name} created by {self.user}"
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comment_users")
+    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name="comment_trip")
+    comment = models.CharField(max_length=500)
+    date = models.DateTimeField(auto_now=True, verbose_name='comment_date')
+
+    def __str__(self):
+        return f"{self.comment} (by: {self.user})"

@@ -23,17 +23,19 @@
             </li>
             {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="">Option 1</a>
+                    <a class="nav-link" href="{% url 'destinations' %}">Destinations</a>
                 </li>
                 <li class="nav-item">
-                <li class="nav-item">
-                    <a class="nav-link" href="">Option 2</a>
+                    <a class="nav-link" href="{% url 'excursions' %}">Excursions</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">Option 3</a>
+                    <a class="nav-link" href="{% url 'hotels' %}">Hotels</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">Log Out</a>
+                    <a class="nav-link" href="">New Trip</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="">My Trip</a>
                 </li>
             {% else %}
                 <li class="nav-item">
