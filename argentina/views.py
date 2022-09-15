@@ -7,6 +7,7 @@ from django.urls import reverse
 import json
 from django.forms.models import model_to_dict
 from .models import User, Destination, Excursion, Hotel, TripData
+from .models import CHILDREN_RANKING_OPTIONS, HOTEL_QUALITY_OPTIONS, SEASONS, INTERESTS, ATTRACTIONS
 
 def index(request):
     return render(request, "argentina/index.html")
@@ -80,3 +81,17 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "argentina/register.html")
+
+
+def newtrip_view(request):
+    return render(request, "argentina/newtrip.html", {
+        "hotel_options": HOTEL_QUALITY_OPTIONS,
+        "interests": INTERESTS,
+        "attractions": ATTRACTIONS,
+        "seasons": SEASONS,
+        "destinations": Destination.objects.all()
+    })
+
+
+def newtrip_create(request):
+    pass

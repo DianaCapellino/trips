@@ -8,5 +8,7 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("destinations", views.get_destinations, name="destinations"),
     path("excursions", views.get_excursions, name="excursions"),
-    path("hotels", views.get_hotels, name="hotels")
+    path("hotels", views.get_hotels, name="hotels"),
+    path("newtrip", views.newtrip_view, name="newtrip"),
+    path("newtrip/create", views.newtrip_create, name="newtrip_create")
 ]
