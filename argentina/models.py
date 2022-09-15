@@ -43,18 +43,18 @@ SEASONS = [
 
 
 CHILDREN_RANKING_OPTIONS = [
-    (1, "1"),
-    (2, "2"),
-    (3, "3"),
-    (4, "4"),
-    (5, "5"),
+    ("1", "1"),
+    ("2", "2"),
+    ("3", "3"),
+    ("4", "4"),
+    ("5", "5"),
 ]
 
 
 HOTEL_QUALITY_OPTIONS = [
-    (3, "3"),
-    (4, "4"),
-    (5, "5"),
+    ("3", "3"),
+    ("4", "4"),
+    ("5", "5"),
 ]
 
 
@@ -74,7 +74,7 @@ class Destination(models.Model):
     interests = MultiSelectField(choices=INTERESTS)
     min_nights = models.PositiveSmallIntegerField()
     max_nights = models.PositiveSmallIntegerField()
-    children_ranking = MultiSelectField(choices=CHILDREN_RANKING_OPTIONS)
+    children_ranking = models.CharField(choices=CHILDREN_RANKING_OPTIONS, max_length=10)
 
     def __str__(self):
         return f"{self.name}"
@@ -90,7 +90,7 @@ class TripData(models.Model):
     interests_selected = MultiSelectField(choices=INTERESTS)
     travel_season = MultiSelectField(choices=SEASONS)
     visited_destinations = models.ManyToManyField(Destination, related_name="visited")
-    hotel_quality_selected = MultiSelectField(choices=HOTEL_QUALITY_OPTIONS)
+    hotel_quality_selected = models.CharField(choices=HOTEL_QUALITY_OPTIONS, max_length=10)
 
 
 class Excursion(models.Model):
@@ -111,10 +111,10 @@ class Excursion(models.Model):
 
 class Hotel(models.Model):
     destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name="properties")
-    hotel_quality = MultiSelectField(choices=HOTEL_QUALITY_OPTIONS)
+    hotel_quality = models.CharField(choices=HOTEL_QUALITY_OPTIONS, max_length=10)
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=800)
-    picture1 = models.CharField(max_length=500)
+    pic1_url = models.CharField(max_length=500)
     pic2_url = models.CharField(max_length=500)
     pic3_url = models.CharField(max_length=500)
     min_age = models.PositiveSmallIntegerField()
