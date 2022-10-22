@@ -10,5 +10,8 @@ urlpatterns = [
     path("excursions", views.get_excursions, name="excursions"),
     path("hotels", views.get_hotels, name="hotels"),
     path("newtrip", views.newtrip_view, name="newtrip"),
-    path("newtrip/create", views.newtrip_create, name="newtrip_create")
+    path("mytrips", views.mytrips, name="mytrips"),
+
+    # API Routes
+    path("create", views.newtrip_create, name="create")
 ]

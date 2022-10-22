@@ -70,7 +70,7 @@ class Destination(models.Model):
     pic1_url = models.CharField(max_length=500)
     pic2_url = models.CharField(max_length=500)
     pic3_url = models.CharField(max_length=500)
-    atractions = MultiSelectField(choices=ATTRACTIONS)
+    attractions = MultiSelectField(choices=ATTRACTIONS)
     interests = MultiSelectField(choices=INTERESTS)
     min_nights = models.PositiveSmallIntegerField()
     max_nights = models.PositiveSmallIntegerField()
@@ -86,11 +86,26 @@ class TripData(models.Model):
     max_age = models.PositiveSmallIntegerField()
     num_pax = models.PositiveSmallIntegerField()
     num_days = models.PositiveSmallIntegerField()
-    atractions_selected = MultiSelectField(choices=ATTRACTIONS)
+    attractions_selected = MultiSelectField(choices=ATTRACTIONS)
     interests_selected = MultiSelectField(choices=INTERESTS)
     travel_season = MultiSelectField(choices=SEASONS)
     visited_destinations = models.ManyToManyField(Destination, related_name="visited")
     hotel_quality_selected = models.CharField(choices=HOTEL_QUALITY_OPTIONS, max_length=10)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user": self.user.name,
+            "are_children": self.are_children,
+            "max_age": self.max_age,
+            "num_pax": self.num_pax,
+            "num_days": self.num_days,
+            "attractions_selected": [self.attractions.all()],
+            "interests_selected": [self.interests.all()],
+            "travel_season": self.travel_season,
+            "visited_destinations": [self.visited_destinations.all()],
+            "hotel_quality_selected": self.hotel_quality_selected
+        }
 
 
 class Excursion(models.Model):

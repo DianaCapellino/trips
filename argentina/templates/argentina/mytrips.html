@@ -1,0 +1,18 @@
+{% extends "argentina/layout.html" %}
+
+{% block body %}
+
+    <h2>New Trip</h2>
+
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
+
+
+    <div id="trip">
+        <h3>Suggestion for this trip</h3>
+        <div id="trip-suggestion"></div>
+    </div>
+
+
+{% endblock %}
