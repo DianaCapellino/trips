@@ -2,17 +2,21 @@
 
 {% block body %}
 
-    <h2>New Trip</h2>
+    <h2>My Trips</h2>
 
     {% if message %}
         <div>{{ message }}</div>
     {% endif %}
 
-
-    <div id="trip">
-        <h3>Suggestion for this trip</h3>
-        <div id="trip-suggestion"></div>
+    <div>
+        <h3>These are my trips</h3>
     </div>
+
+    {% for trip in trips %}
+    <h3>{{ trip.name }}</h3>
+    <h4>{{ trip.start_date }}</h4>
+    <hr>
+{% endfor %}
 
 
 {% endblock %}

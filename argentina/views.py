@@ -6,7 +6,7 @@ from django.db import IntegrityError
 from django.urls import reverse
 import json
 from django.forms.models import model_to_dict
-from .models import User, Destination, Excursion, Hotel, TripData
+from .models import User, Destination, Excursion, Hotel, TripData, TripExcursions, TripDestination, Trip, Comment
 from .models import CHILDREN_RANKING_OPTIONS, HOTEL_QUALITY_OPTIONS, SEASONS, INTERESTS, ATTRACTIONS
 
 def index(request):
@@ -126,6 +126,8 @@ def newtrip_view(request):
         # Save the latest changes
         new_trip.save()
 
+        create_trip(new_trip)
+
         # Redirect to My Trips section
         return HttpResponseRedirect(reverse("mytrips"))
 
@@ -140,5 +142,47 @@ def newtrip_view(request):
         })
 
 
+def create_trip(data):
+    # Creating name of the trip
+    passenger_name = data.user.username
+    passenger_num = data.num_pax
+    name = passenger_name + " x " + passenger_num
+    
+    # Selecting destinations
+    destinations = []
+    
+    # Objects for each destination
+    buenos_aires = Destination.objects.get(id=1)
+    el_calafate = Destination.objects.get(id=2)
+    iguazu = Destination.objects.get(id=3)
+    lakes = Destination.objects.get(id=4)
+    ushuaia = Destination.objects.get(id=5)
+    mendoza = Destination.objects.get(id=6)
+    northwest = Destination.objects.get(id=7)
+    peninsula_valdes = Destination.objects.get(id=8)
+    wetlands = Destination.objects.get(id=9)
+
+    if int(data.num_days) < 4 and data.visited_destinations == False:
+        # If they have less than 4 days the it is just Buenos Aires
+        destinations.append(buenos_aires)
+    elif int(data.num_days) < 4 and buenos_aires in data.visited_destinations:
+        destinations.append(iguazu)
+    elif int(data.num_days) > 4:
+        destinations.append(buenos_aires)
+
+
 def mytrips(request):
-    return render(request, "argentina/mytrips.html")
+    return render(request, "argentina/mytrips.html", {
+        "trips": Trip.objects.filter(user=request.user)
+    })
+
+
+@login_required
+def trips(request):
+    trips = Trip.objects.filter(user=request.user)
+    return JsonResponse([trip.serialize() for trip in trips], safe=False)
+
+
+@login_required
+def trip(request, trip_id):
+    return HttpResponseRedirect(reverse("mytrips"))

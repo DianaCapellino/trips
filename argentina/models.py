@@ -22,7 +22,10 @@ INTERESTS = [
     ("ART", "Art"),
     ("TREKKING", "Trekking"),
     ("ACTIVE", "Active Activities"),
-    ("RELAXING", "Relaxing")
+    ("RELAXING", "Relaxing"),
+    ("LANDSCAPES", "Landscapes"),
+    ("NATURE", "Nature"),
+    ("CULTURE", "Culture")
 ]
 
 
@@ -89,7 +92,7 @@ class TripData(models.Model):
     attractions_selected = MultiSelectField(choices=ATTRACTIONS)
     interests_selected = MultiSelectField(choices=INTERESTS)
     travel_season = MultiSelectField(choices=SEASONS)
-    visited_destinations = models.ManyToManyField(Destination, related_name="visited")
+    visited_destinations = models.ManyToManyField(Destination, related_name="visited", blank=True)
     hotel_quality_selected = models.CharField(choices=HOTEL_QUALITY_OPTIONS, max_length=10)
 
     def serialize(self):
@@ -153,7 +156,7 @@ class TripDestination(models.Model):
 
 
 class Trip(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=200)
     destinations = models.ManyToManyField(TripDestination, related_name="trip_destinations")
     nights = models.PositiveSmallIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="trip_user")

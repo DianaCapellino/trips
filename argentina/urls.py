@@ -13,5 +13,6 @@ urlpatterns = [
     path("mytrips", views.mytrips, name="mytrips"),
 
     # API Routes
-    path("create", views.newtrip_create, name="create")
+    path("trips", views.trips, name="trips"),
+    path("trip/<int:trip_id>", views.trip, name="trip")
 ]
