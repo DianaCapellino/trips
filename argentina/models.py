@@ -30,18 +30,18 @@ INTERESTS = [
 
 
 SEASONS = [
-    ("JANUARY", "January"),
-    ("FEBRUARY", "February"),
-    ("MARCH", "March"),
-    ("APRIL", "April"),
-    ("MAY", "May"),
-    ("JUNE", "June"),
-    ("JULY", "July"),
-    ("AUGUST", "August"),
-    ("SEPTEMBER", "September"),
-    ("OCTOBER", "October"),
-    ("NOVEMBER", "November"),
-    ("DECEMBER", "December")
+    (1, "January"),
+    (2, "February"),
+    (3, "March"),
+    (4, "April"),
+    (5, "May"),
+    (6, "June"),
+    (7, "July"),
+    (8, "August"),
+    (9, "September"),
+    (10, "October"),
+    (11, "November"),
+    (12, "December")
 ]
 
 
@@ -73,8 +73,8 @@ class Destination(models.Model):
     pic1_url = models.CharField(max_length=500)
     pic2_url = models.CharField(max_length=500)
     pic3_url = models.CharField(max_length=500)
-    attractions = MultiSelectField(choices=ATTRACTIONS)
-    interests = MultiSelectField(choices=INTERESTS)
+    attractions = MultiSelectField(choices=ATTRACTIONS, max_length=500)
+    interests = MultiSelectField(choices=INTERESTS, max_length=500)
     min_nights = models.PositiveSmallIntegerField()
     max_nights = models.PositiveSmallIntegerField()
     children_ranking = models.CharField(choices=CHILDREN_RANKING_OPTIONS, max_length=10)
@@ -89,9 +89,9 @@ class TripData(models.Model):
     max_age = models.PositiveSmallIntegerField()
     num_pax = models.PositiveSmallIntegerField()
     num_days = models.PositiveSmallIntegerField()
-    attractions_selected = MultiSelectField(choices=ATTRACTIONS)
-    interests_selected = MultiSelectField(choices=INTERESTS)
-    travel_season = MultiSelectField(choices=SEASONS)
+    attractions_selected = MultiSelectField(choices=ATTRACTIONS, max_length=500)
+    interests_selected = MultiSelectField(choices=INTERESTS, max_length=500)
+    travel_season = MultiSelectField(choices=SEASONS, max_length=500)
     visited_destinations = models.ManyToManyField(Destination, related_name="visited", blank=True)
     hotel_quality_selected = models.CharField(choices=HOTEL_QUALITY_OPTIONS, max_length=10)
 
@@ -118,8 +118,8 @@ class Excursion(models.Model):
     pic1_url = models.CharField(max_length=500)
     pic2_url = models.CharField(max_length=500)
     pic3_url = models.CharField(max_length=500)
-    season = MultiSelectField(choices=SEASONS)
-    interests = MultiSelectField(choices=INTERESTS)
+    season = MultiSelectField(choices=SEASONS, max_length=500)
+    interests = MultiSelectField(choices=INTERESTS, max_length=500)
     min_age = models.PositiveSmallIntegerField()
     max_age = models.PositiveSmallIntegerField()
 
@@ -150,9 +150,12 @@ class TripExcursions(models.Model):
 class TripDestination(models.Model):
     destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name="destination")
     nights = models.PositiveSmallIntegerField()
-    excursions = models.ForeignKey(TripExcursions, on_delete=models.CASCADE, related_name="destination_excursions")
+    excursions = models.ForeignKey(TripExcursions, on_delete=models.CASCADE, related_name="destination_excursions", null=True, blank=True)
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name="stay")
     orderInTrip = models.PositiveSmallIntegerField()
+
+    def __str__(self):
+        return f"{self.destination}"
 
 
 class Trip(models.Model):
@@ -160,7 +163,7 @@ class Trip(models.Model):
     destinations = models.ManyToManyField(TripDestination, related_name="trip_destinations")
     nights = models.PositiveSmallIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="trip_user")
-    shared_with = models.ManyToManyField(User, related_name="companions_trip")
+    shared_with = models.ManyToManyField(User, blank=True, related_name="companions_trip")
     start_date = models.DateTimeField(default=django.utils.timezone.now, verbose_name='start_date')
     finish_date = models.DateTimeField(default=django.utils.timezone.now, verbose_name='finish_date')
 

@@ -4,10 +4,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.urls import reverse
-import json
 from django.forms.models import model_to_dict
+from datetime import date
+import json
 from .models import User, Destination, Excursion, Hotel, TripData, TripExcursions, TripDestination, Trip, Comment
 from .models import CHILDREN_RANKING_OPTIONS, HOTEL_QUALITY_OPTIONS, SEASONS, INTERESTS, ATTRACTIONS
+import random
+import math
+
 
 def index(request):
     return render(request, "argentina/index.html")
@@ -111,7 +115,7 @@ def newtrip_view(request):
             travel_season=season,
             attractions_selected=attractions,
             interests_selected=interests,
-            hotel_quality_selected=quality,
+            hotel_quality_selected=quality
         )
 
         # Add each destination to the information of the trip data
@@ -147,9 +151,25 @@ def create_trip(data):
     passenger_name = data.user.username
     passenger_num = data.num_pax
     name = passenger_name + " x " + passenger_num
+
+    # Creating start and finish dates
+    today = date.today()
+    current_month = 0
+    travel_year = 0
+    for season in SEASONS:
+        if int(data.travel_season) == season[0]:
+            if current_month <= today.month:
+                travel_year = int(today.year + 1)
+            else:
+                travel_year = int(today.year)
+        current_month = current_month + 1
     
-    # Selecting destinations
-    destinations = []
+    start_date = date(travel_year, int(data.travel_season), 1)
+    finish_date = date(travel_year, int(data.travel_season), 1 + int(data.num_days))
+    
+    num_days = int(data.num_days)
+    # Empty list of destinations
+    tripDestinations = []
     
     # Objects for each destination
     buenos_aires = Destination.objects.get(id=1)
@@ -162,13 +182,98 @@ def create_trip(data):
     peninsula_valdes = Destination.objects.get(id=8)
     wetlands = Destination.objects.get(id=9)
 
-    if int(data.num_days) < 4 and data.visited_destinations == False:
-        # If they have less than 4 days the it is just Buenos Aires
-        destinations.append(buenos_aires)
-    elif int(data.num_days) < 4 and buenos_aires in data.visited_destinations:
-        destinations.append(iguazu)
-    elif int(data.num_days) > 4:
-        destinations.append(buenos_aires)
+    if num_days < 4:
+        
+        destinationExcursions = []
+
+        if num_days > 1:
+            for day in range(num_days-1):
+                current_excursion = TripExcursions.objects.create(
+                    dayInTrip = day,
+                    excursion = random.choice(Excursion.objects.filter(destination=buenos_aires))
+                )
+                destinationExcursions.append(current_excursion)
+                
+        current_destination = TripDestination.objects.create(
+            destination = buenos_aires,
+            nights = num_days,
+            excursions = TripExcursions.objects.create(
+                dayInTrip = day,
+                excursion = random.choice(Excursion.objects.filter(destination=buenos_aires))
+            ),
+            hotel = random.choice(Hotel.objects.filter(destination=buenos_aires).filter(hotel_quality=data.hotel_quality_selected)),
+            orderInTrip = 1
+        )
+        current_destination.save()
+
+        new_trip = Trip.objects.create(
+            name=name,
+            nights=data.num_days,
+            user=data.user,
+            start_date=start_date,
+            finish_date=finish_date
+        )
+        new_trip.destinations.add(TripDestination.objects.get(pk=13))
+        new_trip.save()
+
+    elif int(data.num_days) >= 4:
+        destinationExcursions = []
+        destinationExcursions.append(TripExcursions.objects.create(
+            dayInTrip = 1,
+            excursion = random.choice(Excursion.objects.filter(destination=buenos_aires))
+        ))
+        destinationExcursions.append(TripExcursions.objects.create(
+            dayInTrip = 2,
+            excursion = random.choice(Excursion.objects.filter(destination=buenos_aires))
+        ))
+        q_destinations = math.floor(int(data.num_days) / 3)
+        current_trip_destination = TripDestination(
+            destination = buenos_aires,
+            nights = 3,
+            excursions = TripExcursions.objects.create(
+                dayInTrip = 1,
+                excursion = random.choice(Excursion.objects.filter(destination=buenos_aires))
+            ),
+            hotel = random.choice(Hotel.objects.filter(destination=buenos_aires).filter(hotel_quality=data.hotel_quality_selected)),
+            orderInTrip = 1
+        )
+        current_trip_destination.save()
+        tripDestinations.append(current_trip_destination)
+        
+        current_order = 1
+        left_nights = int(data.num_days)
+        for item in range(q_destinations-1):
+            current_nights = 3
+            if left_nights >= 3:
+                current_nights = 3
+            else:
+                current_nights = left_nights
+            
+            current_destination = random.choice(Destination.objects.all())
+            
+            destinationExcursions = []
+
+            if current_nights > 1:
+                for day in range(current_nights-1):
+                    destinationExcursions.append(TripExcursions.objects.create(
+                        dayInTrip = day,
+                        excursion = random.choice(Excursion.objects.filter(destination=current_destination))
+                    ))    
+            current_trip_destination = TripDestination(
+                destination = current_destination,
+                nights = current_nights,
+                excursions = TripExcursions.objects.create(
+                    dayInTrip = 1,
+                    excursion = random.choice(Excursion.objects.filter(destination=buenos_aires))
+                ),
+                hotel = random.choice(Hotel.objects.filter(destination=current_destination).filter(hotel_quality=data.hotel_quality_selected)),
+                orderInTrip = current_order + 1
+            )
+            current_trip_destination.save()  
+            tripDestinations.append(current_trip_destination)
+
+            current_order = current_order + 1
+            left_nights = left_nights - 3
 
 
 def mytrips(request):

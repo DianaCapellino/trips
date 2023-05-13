@@ -7,16 +7,16 @@
     {% if message %}
         <div>{{ message }}</div>
     {% endif %}
-
-    <div>
-        <h3>These are my trips</h3>
-    </div>
-
+    <hr>    
     {% for trip in trips %}
-    <h3>{{ trip.name }}</h3>
-    <h4>{{ trip.start_date }}</h4>
-    <hr>
-{% endfor %}
+        <h3>Trip name: {{ trip.name }}</h3>
+        <h4>Trip date: {{ trip.start_date.date }}</h4>
+        <h4>Total of nights: {{ trip.nights }}</h4>
+        <h4>Finishing date: {{ trip.finish_date.date }}</h4>
+
+        <P>{{ trip.destinations }}</P>
+        <hr>
+    {% endfor %}
 
 
 {% endblock %}
