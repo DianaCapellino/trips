@@ -142,33 +142,24 @@ class Hotel(models.Model):
         return f"{self.name}"
 
 
-class TripExcursions(models.Model):
-    dayInTrip = models.PositiveSmallIntegerField()
-    excursion = models.ForeignKey(Excursion, on_delete=models.CASCADE, related_name="destination_excursions")
-
-
-class TripDestination(models.Model):
-    destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name="destination")
-    nights = models.PositiveSmallIntegerField()
-    excursions = models.ForeignKey(TripExcursions, on_delete=models.CASCADE, related_name="destination_excursions", null=True, blank=True)
-    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name="stay")
-    orderInTrip = models.PositiveSmallIntegerField()
-
-    def __str__(self):
-        return f"{self.destination}"
-
-
 class Trip(models.Model):
     name = models.CharField(max_length=200)
-    destinations = models.ManyToManyField(TripDestination, related_name="trip_destinations")
     nights = models.PositiveSmallIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="trip_user")
-    shared_with = models.ManyToManyField(User, blank=True, related_name="companions_trip")
     start_date = models.DateTimeField(default=django.utils.timezone.now, verbose_name='start_date')
     finish_date = models.DateTimeField(default=django.utils.timezone.now, verbose_name='finish_date')
 
     def __str__(self):
         return f"{self.name} created by {self.user}"
+
+
+class TripItem(models.Model):
+    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name="items")
+    dayInTrip = models.PositiveSmallIntegerField()
+    destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name="destination_item")
+    excursion = models.ForeignKey(Excursion, on_delete=models.CASCADE, blank=True, null=True, related_name="excursion_item")
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, blank=True, null=True, related_name="hotel_item")
+    warning = models.CharField(blank=True, max_length=500)
 
 
 class Comment(models.Model):
@@ -179,3 +170,9 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.comment} (by: {self.user})"
+
+
+class SharedUser(models.Model):
+    trip_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="first_user")
+    shared_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="second_user")
+    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name="shared_trip")

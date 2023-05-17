@@ -9,13 +9,13 @@
     {% endif %}
     <hr>    
     {% for trip in trips %}
-        <h3>Trip name: {{ trip.name }}</h3>
+        <h3>Trip name: <a href="{% url 'trip' trip.id %}">{{ trip.name }}</a></h3>
         <h4>Trip date: {{ trip.start_date.date }}</h4>
         <h4>Total of nights: {{ trip.nights }}</h4>
         <h4>Finishing date: {{ trip.finish_date.date }}</h4>
-
-        <P>{{ trip.destinations }}</P>
         <hr>
+        
+        
     {% endfor %}
 
 

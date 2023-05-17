@@ -11,6 +11,9 @@ urlpatterns = [
     path("hotels", views.get_hotels, name="hotels"),
     path("newtrip", views.newtrip_view, name="newtrip"),
     path("mytrips", views.mytrips, name="mytrips"),
+    path("trip/<str:trip_id>", views.display_trip, name="trip"),
+    path("trip/<str:trip_id>/add_comment", views.add_comment, name="add_comment"),
+    path("trip/<str:trip_id>/share", views.share, name="share"),
 
     # API Routes
     path("trips", views.trips, name="trips"),

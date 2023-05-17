@@ -1,0 +1,95 @@
+{% extends "argentina/layout.html" %}
+
+{% block body %}
+
+    <h2>My Trip Details</h2>
+
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
+    <hr>
+
+    <table>
+        <thead>
+            <td>Day Number</td>
+            <td>Destination</td>
+            <td>Excursion</td>
+            <td>Hotel</td>
+            <td>Warnings</td>
+        </thead>
+        {% for item in items %}
+            <tr>
+                <td>{{ item.dayInTrip }}</td>
+                <td>{{ item.destination }}<br>
+                    <img src="../../static/argentina/images/{{item.destination.pic1_url }}" height="80px">
+                    <img src="../../static/argentina/images/{{item.destination.pic2_url }}" height="80px">
+                    <img src="../../static/argentina/images/{{item.destination.pic3_url }}" height="80px">
+                    <br>{{ item.destination.description }}</td>
+                {% if item.excursion %}
+                    <td>{{ item.excursion }}<br>
+                        <img src="../../static/argentina/images/{{item.excursion.pic1_url }}" height="80px">
+                        <img src="../../static/argentina/images/{{item.excursion.pic2_url }}" height="80px">
+                        <img src="../../static/argentina/images/{{item.excursion.pic3_url }}" height="80px">
+                        <br>{{ item.excursion.description }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
+                {% if item.hotel %}
+                    <td>{{ item.hotel }}<br>
+                        <img src="../../static/argentina/images/{{item.hotel.pic1_url }}" height="80px">
+                        <img src="../../static/argentina/images/{{item.hotel.pic2_url }}" height="80px">
+                        <img src="../../static/argentina/images/{{item.hotel.pic3_url }}" height="80px">
+                        <br>{{ item.hotel.description }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
+                {% if item.warning %}
+                    <td>
+                        {{ item.warning }}
+                    </td>
+                {% else %}
+                    <td>
+                        No warnings
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        
+    </table>
+
+    <hr>
+    <h3>Shared with</h3>
+
+        <form action="{% url 'share' trip.id %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <select class="form-control" name="shared-users" multiple>
+                    {% for user in users %}
+                        <option class="user" value="{{ user.id }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <br>
+            <input class="btn btn-primary" type="submit" value="SHARE">
+        </form>
+
+        <ul>
+            {% for i in shared %}
+                <li>{{ i.shared_user }}</li>
+            {% endfor %}
+        </ul>
+
+    <hr>
+    <h3>Comments</h3>
+        <form action="{% url 'add_comment' trip.id %}" method="post">
+            {% csrf_token %}
+            <input class="form-control" type="text" name="comment">
+            <br>
+            <input class="btn btn-primary" type="submit" value="Add comment">
+        </form>
+        <br>
+        {% for comment in comments %}
+            <div><b>{{ comment.user }} ({{ comment.date }}): </b><i>{{ comment.comment }}</i></div>
+    <hr>
+        {% endfor %}
+{% endblock %}
