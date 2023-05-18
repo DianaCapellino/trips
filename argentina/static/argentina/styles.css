@@ -1,5 +1,40 @@
 body {
-    padding: 10px;
+    color: #000000;
+    font-family: itc-avant-garde-gothic-pro, sans-serif;
+    font-style: normal;
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: myitalic;
+    src: url("../argentina/Monotype Corsiva.ttf");
+}
+
+.app_title {
+    font-family: myitalic;
+    font-size: 100px;
+    text-align: center;
+    padding: 5% 0;
+}
+
+#header {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+
+video {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    z-index: -1;
+}
+
+h2 {
+    font-family: itc-avant-garde-gothic-pro, sans-serif;
+    font-style: normal;
+    font-weight: 700;
 }
 
 .card:hover {

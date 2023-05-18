@@ -103,9 +103,9 @@ def newtrip_view(request):
         max_age = request.POST["max_age"]
         num_days = request.POST["days"]
         season = request.POST["season"]
-        attractions = request.POST["attractions"]
-        interests = request.POST["interests"]
-        destinations_form = request.POST["destinations"]
+        attractions = request.POST.get("attractions", None)
+        interests = request.POST.get("interests", None)
+        destinations_form = request.POST.get("destinations", None)
         quality = request.POST["quality"]
 
         # Create the model of the trip data to get the information
@@ -121,9 +121,10 @@ def newtrip_view(request):
         )
 
         # Add each destination to the information of the trip data
-        for destination_id in destinations_form:
-            destination = Destination.objects.get(id=destination_id)
-            new_trip.visited_destinations.add(destination)
+        if destinations_form:
+            for destination_id in destinations_form:
+                destination = Destination.objects.get(id=destination_id)
+                new_trip.visited_destinations.add(destination)
 
         # If the younger passenger is less than 12, there are children
         if int(min_age) < 12:
@@ -139,12 +140,18 @@ def newtrip_view(request):
 
     # Display the form if viewing the page
     else:
+        # Creates a list to display limited options in form
+        possible_days = []
+        for day in range(26, 1):
+            possible_days.append(day)
+    
         return render(request, "argentina/newtrip.html", {
             "hotel_options": HOTEL_QUALITY_OPTIONS,
             "interests": INTERESTS,
             "attractions": ATTRACTIONS,
             "seasons": SEASONS,
-            "destinations": Destination.objects.all()
+            "destinations": Destination.objects.all(),
+            "days": possible_days
         })
 
 
@@ -216,10 +223,16 @@ def create_trip(data):
 
         # Gets the possible destination according to interests and attractions
         for destination in Destination.objects.all():
-            if (destination.attractions[0] in data.attractions_selected
-                 or destination.interests[0] in data.interests_selected
-                 ) and destination not in visited_destinations:
-                possible_destinations.append(destination)
+            if data.attractions_selected:
+                if destination.attractions[0] in data.attractions_selected:
+                    possible_destinations.append(destination)
+            if data.interests_selected:
+                if destination.interests[0] in data.interests_selected:
+                    possible_destinations.append(destination)
+            if visited_destinations:
+                if destination in possible_destinations:
+                    possible_destinations.remove(destination)
+                    
 
         # Calculates the quantity of destinations
         q_destinations = math.floor(num_days / 3)
@@ -233,7 +246,7 @@ def create_trip(data):
 
             if left_days:
                 # Creates other destinations
-                for item in range(q_destinations):
+                for item in range(q_destinations-1):
                     
                     # Creates an empty list of destinations
                     nonused_destinations = []
@@ -267,7 +280,7 @@ def create_trip(data):
 
             if left_days:
                 # Creates other destinations
-                for item in range(q_destinations):
+                for item in range(q_destinations-1):
                     
                     # Creates an empty list of destinations
                     nonused_destinations = []
@@ -393,23 +406,23 @@ def create_destination(data, trip, days, left_days, destination):
             )
             current_item.save()
         else:
-            # Check all items in the trip
-            all_items = TripItem.objects.filter(trip=trip)
             
             # Create a list for non used excursions
             nonused_excursions = []
-            if all_items:
-                for excursion in Excursion.objects.filter(destination=destination):
-                    if excursion in current_excursions:
-                        pass
-                    else:
+            possible_excursions = Excursion.objects.filter(destination=destination)
+
+            if possible_excursions:
+                for excursion in possible_excursions:
+                    if excursion not in current_excursions:
                         nonused_excursions.append(excursion)
+            else:
+                random_excursion = None
             
             # It selects excursion randomly
             if nonused_excursions:
                 random_excursion = random.choice(nonused_excursions)
             else:
-                random_excursion = random.choice(Excursion.objects.filter(destination=destination))
+                random_excursion = None
             
             # Create item for this day in the trip
             current_item = TripItem.objects.create(
@@ -435,7 +448,8 @@ def create_destination(data, trip, days, left_days, destination):
 def mytrips(request):
     user_trips = Trip.objects.filter(user=request.user)
     return render(request, "argentina/mytrips.html", {
-        "trips": user_trips
+        "trips": user_trips,
+        "shared_trips":request.user.second_user.all()
     })
 
 

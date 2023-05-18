@@ -1,22 +1,58 @@
 {% extends "argentina/layout.html" %}
 
 {% block body %}
-
-    <h2>My Trips</h2>
-
+    <br>
+    <div class="container">
+        <h2>My Trips</h2>
+    </div>
     {% if message %}
         <div>{{ message }}</div>
     {% endif %}
     <hr>    
-    {% for trip in trips %}
-        <h3>Trip name: <a href="{% url 'trip' trip.id %}">{{ trip.name }}</a></h3>
-        <h4>Trip date: {{ trip.start_date.date }}</h4>
-        <h4>Total of nights: {{ trip.nights }}</h4>
-        <h4>Finishing date: {{ trip.finish_date.date }}</h4>
-        <hr>
-        
-        
-    {% endfor %}
-
+    <div class="container">
+        <div class="row">
+            {% if trips %}
+                {% for trip in trips %}
+                    <div class="col-xs-1 col-sm-6 col-md-4">
+                        <div class="card bg-light mb-3">
+                            <h3 class="card-header"><a href="{% url 'trip' trip.id %}">{{ trip.name }}</a></h3>
+                            <div class="card-body">
+                                <p>Trip date: {{ trip.start_date.date }}</p>
+                                <p>Total of nights: {{ trip.nights }}</p>
+                                <p>Finishing date: {{ trip.finish_date.date }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <h4>No trips created by you yet</h4>
+            {% endif %}
+        </div>
+    </div>
+    <hr>
+    <div class="container">
+        <h2>Shared Trips</h2>
+    </div>
+    <hr>
+    <div class="container">
+        <div class="row">
+            {% if shared_trips %}
+                {% for item in shared_trips %}
+                    <div class="col-xs-1 col-sm-6 col-md-4">
+                        <div class="card bg-light mb-3">
+                            <h3 class="card-header"><a href="{% url 'trip' item.trip.id %}">{{ item.trip.name }}</a></h3>
+                            <div class="card-body">
+                                <p>Trip date: {{ item.trip.start_date.date }}</p>
+                                <p>Total of nights: {{ item.trip.nights }}</p>
+                                <p>Finishing date: {{ item.trip.finish_date.date }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <h4>No trips were shared with you yet</h4>
+            {% endif %}
+        </div>
+    </div>
 
 {% endblock %}

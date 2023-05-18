@@ -89,10 +89,10 @@ class TripData(models.Model):
     max_age = models.PositiveSmallIntegerField()
     num_pax = models.PositiveSmallIntegerField()
     num_days = models.PositiveSmallIntegerField()
-    attractions_selected = MultiSelectField(choices=ATTRACTIONS, max_length=500)
-    interests_selected = MultiSelectField(choices=INTERESTS, max_length=500)
+    attractions_selected = MultiSelectField(choices=ATTRACTIONS, max_length=500, blank=True, null=True)
+    interests_selected = MultiSelectField(choices=INTERESTS, max_length=500, blank=True, null=True)
     travel_season = MultiSelectField(choices=SEASONS, max_length=500)
-    visited_destinations = models.ManyToManyField(Destination, related_name="visited", blank=True)
+    visited_destinations = models.ManyToManyField(Destination, related_name="visited", blank=True, null=True)
     hotel_quality_selected = models.CharField(choices=HOTEL_QUALITY_OPTIONS, max_length=10)
 
     def serialize(self):

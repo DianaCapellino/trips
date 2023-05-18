@@ -1,17 +1,19 @@
 {% extends "argentina/layout.html" %}
 
 {% block body %}
-    <h2>Hotels</h2>
-
-        {% for hotel in hotels %}
-            <h3>{{ hotel.name }}</h3>
-            <p>{{ hotel.description }}</p>
-
-            <img src="../../static/argentina/images/{{hotel.pic1_url }}" height="240px">
-            <img src="../../static/argentina/images/{{hotel.pic2_url }}" height="240px">
-            <img src="../../static/argentina/images/{{hotel.pic3_url }}" height="240px">
-            <hr>
-        {% endfor %}
-
-
+    <br>
+    <div class="container">
+        <div class="row">
+            {% for hotel in hotels %}
+                <div class="col-xs-1 col-sm-6 col-md-4">
+                    <div class="card bg-light mb-3">
+                        <img class="card-img" src="../../static/argentina/images/{{hotel.pic1_url }}" alt="Card image">
+                        <div class="card-img-top">
+                            <strong><h3 class="card-title text-center">{{ hotel.name }}</h3></strong>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
