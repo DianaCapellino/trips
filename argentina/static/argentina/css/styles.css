@@ -1,5 +1,5 @@
 body {
-    color: #000000;
+    color: #101010;
     font-family: itc-avant-garde-gothic-pro, sans-serif;
     font-style: normal;
     font-weight: 300;
@@ -7,17 +7,18 @@ body {
 
 @font-face {
     font-family: myitalic;
-    src: url("../argentina/Monotype Corsiva.ttf");
+    src: url("../Monotype Corsiva.ttf");
 }
 
 .app_title {
     font-family: myitalic;
-    font-size: 100px;
+    font-size: 60px;
     text-align: center;
-    padding: 5% 0;
+    padding: 3% 0;
+    text-shadow: rgb(73, 73, 73) 1px 0 10px;
 }
 
-#header {
+#video-header {
     position: relative;
     overflow: hidden;
     height: 100%;
