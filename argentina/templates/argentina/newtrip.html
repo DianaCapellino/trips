@@ -13,71 +13,70 @@
         <div id="trip-form">
             <form id="form" action="{% url 'newtrip' %}" method="post">
                 {% csrf_token %}
-                <div class="row">
-                    <div class="form-group col col-xs-1 col-md-4">
-                        <label>Number of passengers:</label>
-                        <input class="form-control" autofocus type="number" name="passengers">
+                <div class="row g-3">
+                    <div class="col-sm-12 col-md-4">
+                        <label for="numberPassengers" class="form-label">Number of passengers:</label>
+                        <input class="form-control" autofocus type="number" name="passengers" id="numberPassengers">
                     </div>
-                    <div class="form-group col col-xs-1 col-md-4">
-                        <label>Age of younger passenger:</label>
-                        <input class="form-control" type="number" name="min_age">
+                    <div class="col-sm-12 col-md-4">
+                        <label for="minAge" class="form-label">Age of younger passenger:</label>
+                        <input class="form-control" type="number" name="min_age" id="minAge">
                     </div>
-                    <div class="form-group col col-xs-1 col-md-4">
-                        <label>Age of older passenger:</label>
-                        <input class="form-control" type="number" name="max_age">
+                    <div class="col-sm-12 col-md-4">
+                        <label for="maxAge" class="form-label">Age of older passenger:</label>
+                        <input class="form-control" type="number" name="max_age" id="maxAge">
                     </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col col-xs-1 col-md-4">
-                        <label>Total number of days:</label>
-                        <input class="form-control" type="number" name="days" placeholder="Total number of days">
+                    <div class="col-sm-12 col-md-4">
+                        <label for="days" class="form-label">Total number of days:</label>
+                        <select class="form-control" name="days" id="days">
+                            {% for day in days %}
+                                <option value="{{ day }}">{{ day }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <div class="form-group col col-xs-1 col-md-4">
-                        <label>Month of travel:</label>
-                        <select class="form-control" name="season">
+                    <div class="col-sm-12 col-md-4">
+                        <label for="season" class="form-label">Month of travel:</label>
+                        <select class="form-control" name="season" id="season">
                             {% for season in seasons %}
                                 <option value="{{ season.0 }}">{{ season.1 }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="form-group col col-xs-1 col-md-4">
-                        <label>Hotel quality:</label>
-                        <select class="form-control" name="quality">
+                    <div class="col-sm-12 col-md-4">
+                        <label for="quality" class="form-label">Hotel quality:</label>
+                        <select class="form-control" name="quality" id="quality">
                             {% for option in hotel_options %}
                                 <option value="{{ option.0 }}">{{ option.1 }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col col-xs-1 col-md-4">
-                        <label>Attractions:</label>
-                        <select class="form-control" name="attractions" multiple>
+                    <div class="col-sm-12 col-md-4">
+                        <label for="attractions" class="form-label">Attractions:</label>
+                        <select class="form-control" name="attractions" id="attractions" multiple>
                             {% for attraction in attractions %}
                                 <option class="attraction" value="{{ attraction.0 }}">{{ attraction.1 }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="form-group col col-xs-1 col-md-4">
-                        <label>Interests:</label>
-                        <select class="form-control" name="interests" multiple>
+                    <div class="col-sm-12 col-md-4">
+                        <label for="interests" class="form-label">Interests:</label>
+                        <select class="form-control" name="interests" id="interests" multiple>
                             {% for interest in interests %}
                                 <option class="interest" value="{{ interest.0 }}">{{ interest.1 }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="form-group col col-xs-1 col-md-4">
-                        <label>Destinations visited:</label>
-                        <select class="form-control" name="destinations" multiple>
+                    <div class="col-sm-12 col-md-4">
+                        <label for="destinations" class="form-label">Destinations visited:</label>
+                        <select class="form-control" name="destinations" id="destinations" multiple>
                             {% for destination in destinations %}
                                 <option class="destination" value="{{ destination.id }}">{{ destination.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <input class="btn btn-primary" id="save" type="submit" value="Save">
+                    <div class="col-12">
+                        <input class="btn btn-primary" id="save" type="submit" value="Save">
+                    </div>
                 </div>
             </form>
         </div>

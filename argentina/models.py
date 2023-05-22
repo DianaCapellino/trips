@@ -92,7 +92,7 @@ class TripData(models.Model):
     attractions_selected = MultiSelectField(choices=ATTRACTIONS, max_length=500, blank=True, null=True)
     interests_selected = MultiSelectField(choices=INTERESTS, max_length=500, blank=True, null=True)
     travel_season = MultiSelectField(choices=SEASONS, max_length=500)
-    visited_destinations = models.ManyToManyField(Destination, related_name="visited", blank=True, null=True)
+    visited_destinations = models.ManyToManyField(Destination, related_name="visited", blank=True)
     hotel_quality_selected = models.CharField(choices=HOTEL_QUALITY_OPTIONS, max_length=10)
 
     def serialize(self):
@@ -112,6 +112,9 @@ class TripData(models.Model):
 
 
 class Excursion(models.Model):
+    class Meta:
+        ordering = ('name',)
+
     destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name="excursions")
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=1500)
@@ -128,6 +131,9 @@ class Excursion(models.Model):
 
 
 class Hotel(models.Model):
+    class Meta:
+        ordering = ('name',)
+
     destination = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name="properties")
     hotel_quality = models.CharField(choices=HOTEL_QUALITY_OPTIONS, max_length=10)
     name = models.CharField(max_length=100)
@@ -143,6 +149,9 @@ class Hotel(models.Model):
 
 
 class Trip(models.Model):
+    class Meta:
+        ordering = ('-id',)
+        
     name = models.CharField(max_length=200)
     nights = models.PositiveSmallIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="trip_user")

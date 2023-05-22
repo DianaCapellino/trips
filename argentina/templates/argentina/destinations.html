@@ -6,10 +6,41 @@
         <div class="row">
             {% for destination in destinations %}
                 <div class="col-xs-1 col-sm-6 col-md-4">
-                    <div class="card bg-light mb-3">
+                    <div class="card bg-light mb-3" data-bs-toggle="modal" data-bs-target="#windowDestination{{ destination.id }}">
                         <img class="card-img" src="../../static/argentina/images/{{destination.pic1_url }}" alt="Card image">
                         <div class="card-img-top">
                             <strong><h4 class="card-title text-center">{{ destination.name }}</h4></strong>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="windowDestination{{ destination.id }}" tabindex="-1" aria-labelledby="label{{ destination.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="modal-title fs-5" id="label{{ destination.id }}">{{ destination.name }}</h3>
+                                    <button tyle="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">  
+                                    <img src="../../static/argentina/images/{{ destination.pic1_url }}" height="90px">
+                                    <img src="../../static/argentina/images/{{ destination.pic2_url }}" height="90px">
+                                    <img src="../../static/argentina/images/{{ destination.pic3_url }}" height="90px">
+                                    <br>
+                                    {{ destination.description }}
+                                    <hr>
+                                    Attractions:
+                                    <ul>
+                                        {% for i in destination.attractions %}
+                                            <li class="text-lowercase">{{ i }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    <hr>
+                                    Interests:
+                                    <ul>
+                                        {% for i in destination.interests %}
+                                            <li class="text-lowercase">{{ i }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

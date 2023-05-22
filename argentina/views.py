@@ -139,19 +139,14 @@ def newtrip_view(request):
         return HttpResponseRedirect(reverse("mytrips"))
 
     # Display the form if viewing the page
-    else:
-        # Creates a list to display limited options in form
-        possible_days = []
-        for day in range(26, 1):
-            possible_days.append(day)
-    
+    else:    
         return render(request, "argentina/newtrip.html", {
             "hotel_options": HOTEL_QUALITY_OPTIONS,
             "interests": INTERESTS,
             "attractions": ATTRACTIONS,
             "seasons": SEASONS,
             "destinations": Destination.objects.all(),
-            "days": possible_days
+            "days": list(range(1, 28))
         })
 
 
@@ -455,15 +450,32 @@ def mytrips(request):
 
 @login_required
 def display_trip(request, trip_id):
-    trip = Trip.objects.get(pk=trip_id)
-    user_id = request.user.id
 
+    # Gets the trip object
+    trip = Trip.objects.get(pk=trip_id)
+
+    # Prepares the list for shared users
+    shared_users_list = SharedUser.objects.filter(trip_user=request.user).filter(trip=trip)
+    shared_users = []   
+    for i in shared_users_list:
+        shared_users.append(i.shared_user)
+
+    # Prepares the list for non-shared users
+    non_shared_users = []
+    for user in User.objects.all():
+        if shared_users:
+            if user != request.user and user not in shared_users:
+                non_shared_users.append(user)
+        else:
+            non_shared_users = User.objects.exclude(pk=request.user.id)
+
+    # Displays all the details of the trip
     return render(request, "argentina/trip.html", {
         "trip": trip,
         "items": TripItem.objects.filter(trip_id=trip_id),
         "comments": Comment.objects.filter(trip=trip),
-        "users": User.objects.exclude(pk=user_id),
-        "shared": SharedUser.objects.filter(trip_user=request.user).filter(trip=trip)
+        "users": non_shared_users,
+        "shared": shared_users
     })
 
 
@@ -489,18 +501,37 @@ def share(request, trip_id):
     # When submitting the form
     if request.method == "POST":
 
-        shared_users = request.POST["shared-users"]
+        # Takes the trip object with the trip_id
+        trip = Trip.objects.get(pk=trip_id)
+
+        # Prepares a list for shared users
+        shared_users_list = SharedUser.objects.filter(trip_user=request.user).filter(trip=trip)
+        shared_users = []   
+        for i in shared_users_list:
+            shared_users.append(i.shared_user)
+
+        # Prepares the list for non-shared users
+        non_shared_users = []
+        for user in User.objects.all():
+            if shared_users:
+                if user != request.user and user not in shared_users:
+                    non_shared_users.append(user)
+            else:
+                non_shared_users = User.objects.exclude(pk=request.user.id)
 
         # Get the information from the form
-        for user in shared_users:
-            trip = Trip.objects.get(pk=trip_id)
-            user_object = User.objects.get(pk=user)
+        form_users_id = request.POST["shared-users"]
 
-        new_shareduser = SharedUser.objects.create(
-            trip_user=request.user,
-            shared_user=user_object,
-            trip=trip
-        )
+        # Creates the shared user for the requested users
+        for user_id in form_users_id:
+            user_object = User.objects.get(pk=user_id)
+
+            if user_object != request.user and user_object in non_shared_users:
+                SharedUser.objects.create(
+                    trip_user=request.user,
+                    shared_user=user_object,
+                    trip=trip
+                )
 
         return HttpResponseRedirect(reverse("trip", args=[trip_id]))
 

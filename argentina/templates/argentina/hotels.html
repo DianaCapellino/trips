@@ -5,14 +5,31 @@
     <div class="container">
         <div class="row">
             {% for hotel in hotels %}
-                <div class="col-xs-1 col-sm-6 col-md-4">
-                    <div class="card bg-light mb-3">
-                        <img class="card-img" src="../../static/argentina/images/{{hotel.pic1_url }}" alt="Card image">
-                        <div class="card-img-top">
-                            <strong><h3 class="card-title text-center">{{ hotel.name }}</h3></strong>
+            <div class="col-xs-1 col-sm-6 col-md-4">
+                <div class="card bg-light mb-3" data-bs-toggle="modal" data-bs-target="#windowHotel{{ hotel.id }}">
+                    <img class="card-img" src="../../static/argentina/images/{{hotel.pic1_url }}" alt="Card image">
+                    <div class="card-img-top">
+                        <strong><h4 class="card-title text-center">{{ hotel.name }}</h4></strong>
+                    </div>
+                </div>
+                <div class="modal fade" id="windowHotel{{ hotel.id }}" tabindex="-1" aria-labelledby="label{{ hotel.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title fs-5" id="label{{ hotel.id }}">{{ hotel.name }} - {{ hotel.destination }}</h3>
+                                <button tyle="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">  
+                                <img src="../../static/argentina/images/{{ hotel.pic1_url }}" height="90px">
+                                <img src="../../static/argentina/images/{{ hotel.pic2_url }}" height="90px">
+                                <img src="../../static/argentina/images/{{ hotel.pic3_url }}" height="90px">
+                                <br>
+                                {{ hotel.description }}
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
             {% endfor %}
         </div>
     </div>
