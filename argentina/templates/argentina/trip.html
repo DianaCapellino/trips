@@ -2,8 +2,15 @@
 
 {% block body %}
     <br>
+    <div id="trip-id" class="d-none">{{ trip.id }}</div>
     <div class="container">
-        <h2>{{ trip.name }}</h2>
+        <h2 class="d-inline" id="title">{{ trip.name }}</h2>
+        <input class="d-none" id="titleinput" value=""></input>
+
+        {% if request.user == trip.user %}
+        <img src="../../static/argentina/images/icons/pencil-solid.svg" class="mx-3 mb-2 d-inline" id="pencil"></i>
+        <button class="btn btn-primary d-none mx-3 mb-2" id="save-btn">SAVE</button>
+    {% endif %}
     </div>
     {% if message %}
         <div>{{ message }}</div>
@@ -11,7 +18,7 @@
     <hr>
     <div class="container">
         <div class="row">
-            <div class="col col-md-9">
+            <main class="col col-md-12 col-lg-9">
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -20,6 +27,7 @@
                                 <th scope="col">Destination</th>
                                 <th scope="col">Excursion</th>
                                 <th scope="col">Hotel</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -38,30 +46,43 @@
                                     {% else %}
                                         <td>-</td>
                                     {% endif %}
-                                </tr>
-                                <tr class="d-none">
-                                    <td colspan="2">
-                                        <br>{{ item.excursion.description }}
-                                    </td>
-                                    <td colspan="2">
-                                        <br>{{ item.hotel.description }}
+                                    <td>
+                                        <i class="fa-solid fa-eye trip-row" id="{{ item.id }}"></i>
+                                        <i class="fa-sharp fa-solid fa-eye-slash d-none" id="hide-{{ item.id }}"></i>
                                     </td>
                                 </tr>
-                                <tr class="d-none">
-                                    {% if item.warning %}
-                                        <td colspan="4">{{ item.warning }}</td>
-                                    {% else %}
-                                        <td colspan="4">
-                                            No warnings
-                                        </td>
-                                    {% endif %}
+                                <tr class="d-none" id="row-details-{{ item.id }}">
+                                    <td colspan="5">
+                                        {% if item.excursion %}
+                                            <strong>{{ item.excursion.name }}</strong>
+                                            <br>{{ item.excursion.description }}
+                                        {% else %}
+                                            <i>No excursions this day</i>
+                                        {% endif %}
+                                        <br>
+                                        {% if item.hotel %}
+                                            <strong>{{ item.hotel.name }}</strong>
+                                            <br>{{ item.hotel.description }}
+                                        {% else %}
+                                            <i>Flight back home</i>
+                                        {% endif %}
+                                        <br>
+                                        {% if item.warning %}
+                                            <strong>{{ item.warning }}</strong>
+                                        {% else %}
+                                            <i>No warnings</i>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr class="" id="row-warning-{{ item.id }}">
+
                                 </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
-            </div>
-            <div class="col col-md-3">
+            </main>
+            <aside class="col col-md-12 col-lg-3">
                 <div>
                     <h3>Sharing</h3>
                     {% if request.user == trip.user %}
@@ -95,7 +116,7 @@
                         </p>
                     {% endif %}
                 </div>
-            </div>
+            </aside>
         </div>
     </div>
     <hr>
@@ -113,4 +134,8 @@
         {% endfor %}
     </div>
     <br>
+    {% block script %}
+        <script src="../../static/argentina/js/edittrip.js"></script>
+    {% endblock %}
 {% endblock %}
+

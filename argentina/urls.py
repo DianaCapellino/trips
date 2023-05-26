@@ -16,6 +16,6 @@ urlpatterns = [
     path("trip/<str:trip_id>/share", views.share, name="share"),
 
     # API Routes
-    path("trips", views.trips, name="trips"),
-    path("trip/<int:trip_id>", views.trip, name="trip")
+    path("trip/json/<int:trip_id>", views.trip, name="jsontrip"),
+    path("trip/tripitem/<int:tripitem_id>", views.tripitem, name="tripitem")
 ]

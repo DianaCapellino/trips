@@ -10,9 +10,9 @@ body {
     src: url("../Qwigley-Regular.ttf");
 }
 
-.app_title {
+#app-title {
     font-family: branditalic;
-    font-size: 60px;
+    font-size: 40px;
     text-align: center;
     padding: 2% 0;
     text-shadow: rgb(73, 73, 73) 1px 0 10px;
@@ -48,5 +48,34 @@ h2 {
 
 #brand-name {
     font-family: branditalic, arial;
-    font-size: 2em;
+    font-size: 1.5rem;
 }
+
+#homeimage {
+    width: 100%;
+}
+
+#pencil {
+    height: 18px;
+}
+
+#pencil:hover,
+#pencil:focus {
+    filter: invert(54%) sepia(4%) saturate(6%) hue-rotate(331deg) brightness(92%) contrast(81%);
+}
+
+#titleinput {
+    width: 30rem;
+}
+
+@media (min-width: 400px) {
+    #brand-name {
+      font-size: 2rem;
+    }
+
+    #app-title {
+        font-size: 60px;
+      }
+  }
+
+  

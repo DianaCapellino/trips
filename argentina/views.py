@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.urls import reverse
 from django.forms.models import model_to_dict
+from django.views.decorators.csrf import csrf_exempt
 from datetime import date
 import json
 from .models import User, Destination, Excursion, Hotel, TripData, TripItem, Trip, Comment, SharedUser
@@ -535,12 +536,88 @@ def share(request, trip_id):
 
         return HttpResponseRedirect(reverse("trip", args=[trip_id]))
 
-@login_required
-def trips(request):
-    trips = Trip.objects.filter(user=request.user)
-    return JsonResponse([trip.serialize() for trip in trips], safe=False)
-
 
 @login_required
+@csrf_exempt
 def trip(request, trip_id):
-    return HttpResponseRedirect(reverse("mytrips"))
+    
+    # Query for trip
+    try:
+        trip_object = Trip.objects.get(pk=trip_id)
+        trip = model_to_dict(trip_object)
+    except Trip.DoesNotExist:
+        return JsonResponse({"error": "Trip not found."}, status=404)
+
+    # Return trip contents
+    if request.method == "GET":
+        return JsonResponse(trip, safe=False)
+
+    # Update trip
+    elif request.method == "PUT":
+
+        # Check if the user is the owner of the trip and get json information
+        if request.user == trip_object.user:
+            data = json.loads(request.body)
+
+            # Update information of the trip
+            if data.get("name") is not None:
+                trip_object.name = data["name"]
+
+            # Save the changes of the trip
+            trip_object.save()
+            return HttpResponse(status=204)
+        else:
+            return JsonResponse({"error": "User is not the owner."}, status=404)
+
+    # Trip requests must be via GET or PUT
+    else:
+        return JsonResponse({
+            "error": "GET or PUT request required."
+        }, status=400)
+    
+
+@login_required
+@csrf_exempt
+def tripitem(request, tripitem_id):
+    
+    # Query for trip item
+    try:
+        tripitem_object = TripItem.objects.get(pk=tripitem_id)
+        tripitem = model_to_dict(tripitem_object)
+    except TripItem.DoesNotExist:
+        return JsonResponse({"error": "Trip Item not found."}, status=404)
+
+    # Return trip contents
+    if request.method == "GET":
+        return JsonResponse(tripitem, safe=False)
+
+    # Update trip
+    elif request.method == "PUT":
+
+        # Check if the user is the owner of the trip and get json information
+        if request.user == tripitem_object.user:
+            data = json.loads(request.body)
+
+            # Update information of the trip
+            if data.get("dayInTrip") is not None:
+                tripitem_object.dayInTrip = data["dayInTrip"]
+
+            # Update information of the trip
+            if data.get("excursion") is not None:
+                tripitem_object.excursion = data["excursion"]
+
+            # Update information of the trip
+            if data.get("hotel") is not None:
+                tripitem_object.hotel = data["hotel"]
+
+            # Save the changes of the trip
+            tripitem_object.save()
+            return HttpResponse(status=204)
+        else:
+            return JsonResponse({"error": "User is not the owner."}, status=404)
+
+    # Trip requests must be via GET or PUT
+    else:
+        return JsonResponse({
+            "error": "GET or PUT request required."
+        }, status=400)

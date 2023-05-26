@@ -95,21 +95,6 @@ class TripData(models.Model):
     visited_destinations = models.ManyToManyField(Destination, related_name="visited", blank=True)
     hotel_quality_selected = models.CharField(choices=HOTEL_QUALITY_OPTIONS, max_length=10)
 
-    def serialize(self):
-        return {
-            "id": self.id,
-            "user": self.user.name,
-            "are_children": self.are_children,
-            "max_age": self.max_age,
-            "num_pax": self.num_pax,
-            "num_days": self.num_days,
-            "attractions_selected": [self.attractions.all()],
-            "interests_selected": [self.interests.all()],
-            "travel_season": self.travel_season,
-            "visited_destinations": [self.visited_destinations.all()],
-            "hotel_quality_selected": self.hotel_quality_selected
-        }
-
 
 class Excursion(models.Model):
     class Meta:
@@ -160,6 +145,16 @@ class Trip(models.Model):
 
     def __str__(self):
         return f"{self.name} created by {self.user}"
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "nights": self.nights,
+            "user": self.user.username,
+            "start_date": self.start_date,
+            "finish_date": self.finish_date
+        }
 
 
 class TripItem(models.Model):
@@ -169,6 +164,17 @@ class TripItem(models.Model):
     excursion = models.ForeignKey(Excursion, on_delete=models.CASCADE, blank=True, null=True, related_name="excursion_item")
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, blank=True, null=True, related_name="hotel_item")
     warning = models.CharField(blank=True, max_length=500)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "trip": self.trip.id,
+            "dayInTrip": self.dayInTrip,
+            "destination": self.destination.name,
+            "excursion": self.excursion.name,
+            "hotel": self.hotel.name,
+            "warning": self.warning
+        }
 
 
 class Comment(models.Model):
