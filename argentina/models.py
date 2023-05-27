@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.forms import ModelForm
 from django.conf import settings
 from multiselectfield import MultiSelectField
 import django.utils.timezone
