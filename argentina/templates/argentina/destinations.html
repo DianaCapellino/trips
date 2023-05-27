@@ -27,18 +27,14 @@
                                     {{ destination.description }}
                                     <hr>
                                     Attractions:
-                                    <ul>
-                                        {% for i in destination.attractions %}
-                                            <li class="text-lowercase">{{ i }}</li>
-                                        {% endfor %}
-                                    </ul>
+                                    {% for i in destination.attractions %}
+                                        <span class="badge bg-secondary">{{ i }}</span>
+                                    {% endfor %}
                                     <hr>
                                     Interests:
-                                    <ul>
-                                        {% for i in destination.interests %}
-                                            <li class="text-lowercase">{{ i }}</li>
-                                        {% endfor %}
-                                    </ul>
+                                    {% for i in destination.interests %}
+                                        <span class="badge bg-secondary">{{ i }}</span>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>

@@ -8,9 +8,9 @@
         <input class="d-none" id="titleinput" value=""></input>
 
         {% if request.user == trip.user %}
-        <img src="../../static/argentina/images/icons/pencil-solid.svg" class="mx-3 mb-2 d-inline" id="pencil"></i>
-        <button class="btn btn-primary d-none mx-3 mb-2" id="save-btn">SAVE</button>
-    {% endif %}
+            <img src="../../static/argentina/images/icons/pencil-solid.svg" class="mx-3 mb-2 d-inline pencil" id="pencil-title"></i>
+            <button class="btn btn-primary d-none mx-3 mb-2" id="save-btn-title">SAVE</button>
+        {% endif %}
     </div>
     {% if message %}
         <div>{{ message }}</div>
@@ -18,7 +18,7 @@
     <hr>
     <div class="container">
         <div class="row">
-            <main class="col col-md-12 col-lg-9">
+            <main class="col col-12 col-lg-9">
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -54,22 +54,33 @@
                                 <tr class="d-none" id="row-details-{{ item.id }}">
                                     <td colspan="5">
                                         {% if item.excursion %}
-                                            <strong>{{ item.excursion.name }}</strong>
-                                            <br>{{ item.excursion.description }}
+                                            <strong class="d-inline" id="excursion-{{ item.id }}">{{ item.excursion.name }}</strong>
+                                            {% if request.user == trip.user %}
+                                                <select class="d-none" id="new-excursion-{{ item.id }}" style="width:40%"></select>
+                                                <img src="../../static/argentina/images/icons/pencil-solid.svg" class="mx-3 mb-2 d-inline pencil" id="pencil-excursion-{{ item.id }}"></i>
+                                                <button class="d-none" id="save-btn-excursion-{{ item.id }}">SAVE</button>
+                                            {% endif %}
+                                            <br><div id="excursion-description-{{ item.id }}">{{ item.excursion.description }}</div>
                                         {% else %}
                                             <i>No excursions this day</i>
                                         {% endif %}
-                                        <br>
                                         {% if item.hotel %}
-                                            <strong>{{ item.hotel.name }}</strong>
-                                            <br>{{ item.hotel.description }}
+                                            <br>
+                                            <strong class="d-inline" id="hotel-{{ item.id }}">{{ item.hotel.name }}</strong>
+                                            {% if request.user == trip.user %}
+                                                <select class="d-none" id="new-hotel-{{ item.id }}" style="width:40%"></select>
+                                                <img src="../../static/argentina/images/icons/pencil-solid.svg" class="mx-3 mb-2 d-inline pencil" id="pencil-hotel-{{ item.id }}"></i>
+                                                <button class="d-none" id="save-btn-hotel-{{ item.id }}">SAVE</button>
+                                            {% endif %}
+                                            <br><div id="hotel-description-{{ item.id }}">{{ item.hotel.description }}</div>
                                         {% else %}
                                             <i>Flight back home</i>
                                         {% endif %}
-                                        <br>
                                         {% if item.warning %}
+                                            <br>
                                             <strong>{{ item.warning }}</strong>
                                         {% else %}
+                                            <br>
                                             <i>No warnings</i>
                                         {% endif %}
                                     </td>
@@ -82,7 +93,7 @@
                     </table>
                 </div>
             </main>
-            <aside class="col col-md-12 col-lg-3">
+            <aside class="col col-12 col-lg-3">
                 <div>
                     <h3>Sharing</h3>
                     {% if request.user == trip.user %}
@@ -134,8 +145,5 @@
         {% endfor %}
     </div>
     <br>
-    {% block script %}
-        <script src="../../static/argentina/js/edittrip.js"></script>
-    {% endblock %}
 {% endblock %}
 

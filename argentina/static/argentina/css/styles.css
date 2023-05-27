@@ -51,21 +51,27 @@ h2 {
     font-size: 1.5rem;
 }
 
-#homeimage {
-    width: 100%;
+#homeimages {
+    display: flex;
+    flex-wrap: no-wrap;
 }
 
-#pencil {
+.homeimage {
+    width: 2px;
+    flex: auto;
+}
+
+.pencil {
     height: 18px;
 }
 
-#pencil:hover,
-#pencil:focus {
+.pencil:hover,
+.pencil:focus {
     filter: invert(54%) sepia(4%) saturate(6%) hue-rotate(331deg) brightness(92%) contrast(81%);
 }
 
 #titleinput {
-    width: 30rem;
+    width: 30%;
 }
 
 @media (min-width: 400px) {

@@ -14,6 +14,7 @@ import random
 import math
 
 
+# Page with the index
 def index(request):
     return render(request, "argentina/index.html")
 
@@ -39,6 +40,7 @@ def get_hotels(request):
     })
 
 
+# Login implementation
 def login_view(request):
     if request.method == "POST":
 
@@ -59,12 +61,14 @@ def login_view(request):
         return render(request, "argentina/login.html")
 
 
+# Logout implementation
 @login_required
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
 
 
+# Register implementation
 def register(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -92,6 +96,7 @@ def register(request):
         return render(request, "argentina/register.html")
 
 
+# Creates a new trip
 @login_required
 def newtrip_view(request):
 
@@ -109,7 +114,49 @@ def newtrip_view(request):
         destinations_form = request.POST.get("destinations", None)
         quality = request.POST["quality"]
 
-        # Create the model of the trip data to get the information
+        # Validations
+        if not num_pax or not min_age or not max_age or not num_days:
+            return render(request, "argentina/newtrip.html", {
+                "message": "All fields must be complete.",
+                "hotel_options": HOTEL_QUALITY_OPTIONS,
+                "interests": INTERESTS,
+                "attractions": ATTRACTIONS,
+                "seasons": SEASONS,
+                "destinations": Destination.objects.all(),
+                "days": list(range(1, 28))
+            })
+        if int(num_pax) <= 0:
+            return render(request, "argentina/newtrip.html", {
+                "message": "Number of passengers must be a positive number.",
+                "hotel_options": HOTEL_QUALITY_OPTIONS,
+                "interests": INTERESTS,
+                "attractions": ATTRACTIONS,
+                "seasons": SEASONS,
+                "destinations": Destination.objects.all(),
+                "days": list(range(1, 28))
+            })
+        if int(min_age) <= 0 or int(max_age) <= 0:
+            return render(request, "argentina/newtrip.html", {
+                "message": "Age of younger and older passengers must be positive numbers.",
+                "hotel_options": HOTEL_QUALITY_OPTIONS,
+                "interests": INTERESTS,
+                "attractions": ATTRACTIONS,
+                "seasons": SEASONS,
+                "destinations": Destination.objects.all(),
+                "days": list(range(1, 28))
+            })
+        if int(min_age) > int(max_age):
+            return render(request, "argentina/newtrip.html", {
+                "message": "Age of younger passenger should be less or equals age of older passenger.",
+                "hotel_options": HOTEL_QUALITY_OPTIONS,
+                "interests": INTERESTS,
+                "attractions": ATTRACTIONS,
+                "seasons": SEASONS,
+                "destinations": Destination.objects.all(),
+                "days": list(range(1, 28))
+            })
+
+        # Creates the model of the trip data to get the information
         new_trip = TripData.objects.create(
             user=request.user,
             num_pax=num_pax,
@@ -595,7 +642,7 @@ def tripitem(request, tripitem_id):
     elif request.method == "PUT":
 
         # Check if the user is the owner of the trip and get json information
-        if request.user == tripitem_object.user:
+        if request.user == tripitem_object.trip.user:
             data = json.loads(request.body)
 
             # Update information of the trip
@@ -604,11 +651,13 @@ def tripitem(request, tripitem_id):
 
             # Update information of the trip
             if data.get("excursion") is not None:
-                tripitem_object.excursion = data["excursion"]
+                excursion_object = Excursion.objects.get(pk=int(data["excursion"]))
+                tripitem_object.excursion = excursion_object
 
             # Update information of the trip
             if data.get("hotel") is not None:
-                tripitem_object.hotel = data["hotel"]
+                hotel_object = Hotel.objects.get(pk=int(data["hotel"]))
+                tripitem_object.hotel = hotel_object
 
             # Save the changes of the trip
             tripitem_object.save()
@@ -621,3 +670,22 @@ def tripitem(request, tripitem_id):
         return JsonResponse({
             "error": "GET or PUT request required."
         }, status=400)
+    
+
+# Gets the json response for options to change excursion/hotel
+def display_options(request, type, destination_id):
+
+    destination_object = Destination.objects.get(pk=int(destination_id))
+    
+    if type == "hotel":
+        items_list = Hotel.objects.filter(destination=destination_object)
+        items = list(items_list.values())
+    elif type == "excursion":
+        items_list = Excursion.objects.filter(destination=destination_object)
+        items = list(items_list.values())
+    else:
+        return JsonResponse({
+            "error": "Type is not recognized."
+        }, status=400)
+
+    return JsonResponse(items, safe=False)

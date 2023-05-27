@@ -113,6 +113,13 @@ class Excursion(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "destination_id": self.destination.id,
+            "name": self.name
+        }
 
 
 class Hotel(models.Model):
@@ -131,6 +138,13 @@ class Hotel(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "destination_id": self.destination.id,
+            "name": self.name
+        }
 
 
 class Trip(models.Model):
@@ -171,6 +185,7 @@ class TripItem(models.Model):
             "trip": self.trip.id,
             "dayInTrip": self.dayInTrip,
             "destination": self.destination.name,
+            "destination_id": self.destination.id,
             "excursion": self.excursion.name,
             "hotel": self.hotel.name,
             "warning": self.warning

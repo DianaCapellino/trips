@@ -27,11 +27,9 @@
                                 {{ excursion.description }}
                                 <hr>
                                 Interests:
-                                <ul>
-                                    {% for i in excursion.interests %}
-                                        <li class="text-lowercase">{{ i }}</li>
-                                    {% endfor %}
-                                </ul>
+                                {% for i in excursion.interests %}
+                                    <span class="badge bg-secondary">{{ i }}</span>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>

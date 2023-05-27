@@ -17,5 +17,6 @@ urlpatterns = [
 
     # API Routes
     path("trip/json/<int:trip_id>", views.trip, name="jsontrip"),
-    path("trip/tripitem/<int:tripitem_id>", views.tripitem, name="tripitem")
+    path("trip/tripitem/<int:tripitem_id>", views.tripitem, name="tripitem"),
+    path("json/<str:type>/<int:destination_id>", views.display_options, name="display_options")
 ]
