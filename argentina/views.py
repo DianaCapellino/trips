@@ -403,7 +403,7 @@ def create_destination(data, trip, days, left_days, destination):
     # Makes a list of hotels matching ages
     if data.are_children:
         for hotel in first_filtered_hotels:
-            if hotel.min_age >= 12:
+            if hotel.min_age <= 12:
                 possible_hotels.append(hotel)
 
         # If any hotel matches, takes all hotels but set a warning
@@ -447,6 +447,8 @@ def create_destination(data, trip, days, left_days, destination):
                 excursion=None,
                 hotel=current_hotel
             )
+            if hotel_age_warning:
+                current_item.warning = "Please check ages. No hotel matching"
             current_item.save()
         else:
             
@@ -475,15 +477,13 @@ def create_destination(data, trip, days, left_days, destination):
                 excursion=random_excursion,
                 hotel=current_hotel
             )
+            if hotel_age_warning:
+                current_item.warning = "Please check ages. No hotel matching"
+            if interest_warning:
+                current_item.warning = "Please note there are no services matching interests selected"
 
             current_item.save()
             current_excursions.append(current_item.excursion)
-        
-        # Sets the warnings if they are activated
-        if hotel_age_warning:
-            warning = "Please check ages. No hotel matching"
-        if interest_warning:
-            warning = "Please note there are no services matching interests selected"
         current_day = current_day + 1
 
 
@@ -615,11 +615,16 @@ def trip(request, trip_id):
             return HttpResponse(status=204)
         else:
             return JsonResponse({"error": "User is not the owner."}, status=404)
+    
+    # Deletes the trip
+    elif request.method == "DELETE":
+        trip_object.delete()
+        return HttpResponse(status=204)
 
-    # Trip requests must be via GET or PUT
+    # Trip requests must be via GET or PUT or DELETE
     else:
         return JsonResponse({
-            "error": "GET or PUT request required."
+            "error": "GET or PUT or DELETE request required."
         }, status=400)
     
 
@@ -645,16 +650,16 @@ def tripitem(request, tripitem_id):
         if request.user == tripitem_object.trip.user:
             data = json.loads(request.body)
 
-            # Update information of the trip
+            # Updates day in trip of the trip
             if data.get("dayInTrip") is not None:
                 tripitem_object.dayInTrip = data["dayInTrip"]
 
-            # Update information of the trip
+            # Updates excursion of the trip
             if data.get("excursion") is not None:
                 excursion_object = Excursion.objects.get(pk=int(data["excursion"]))
                 tripitem_object.excursion = excursion_object
 
-            # Update information of the trip
+            # Updates hotel of the trip
             if data.get("hotel") is not None:
                 hotel_object = Hotel.objects.get(pk=int(data["hotel"]))
                 tripitem_object.hotel = hotel_object

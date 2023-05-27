@@ -5,6 +5,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (pencil_title != null) {
         pencil_title.addEventListener("click", edit_title);
     }
+
+    // Gets the modal button to confirm deleting the trip
+    const delete_btn = document.getElementById('conf-delete-trip');
+    if (delete_btn != null) {
+        document.getElementById('conf-delete-trip').addEventListener("click", delete_trip);
+    }
+
     
     // Display details of the day when clicking the row
     const all_trip_rows = document.querySelectorAll('.trip-row');
@@ -25,10 +32,12 @@ function edit_title() {
     const title = document.querySelector('#title');
     const title_input = document.querySelector('#titleinput');
     const pencil = document.querySelector('#pencil-title');
+    const trash = document.querySelector('#trash');
 
     // Activates the save button and hides the pencil and title
     pencil.className='d-none';
     title.className='d-none';
+    trash.className='d-none';
     save_btn.className='btn btn-primary mx-3 mb-2';
     
     // Activates the input field with the text of the title as default    
@@ -57,6 +66,7 @@ function edit_title() {
         save_btn.className='d-none';
         title.className='d-inline';
         pencil.className='mx-3 mb-2 d-inline pencil';
+        trash.className='mb-2 d-inline trash';
     })
 }
 
@@ -229,4 +239,18 @@ function edit_item(type, tripitem_id) {
             select.remove(i);
         };
     });
+}
+
+// Function to delete the trip
+function delete_trip() {
+
+    // Gets the trip id
+    const trip_id = document.getElementById('trip-id').innerHTML;
+    
+    // Makes the request to the server to delete
+    fetch(`json/${trip_id}`, {
+        method: 'DELETE',
+    })
+    .then(response => response.json)
+    .then(window.location = '../mytrips')
 }

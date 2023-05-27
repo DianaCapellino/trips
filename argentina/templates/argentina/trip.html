@@ -8,8 +8,30 @@
         <input class="d-none" id="titleinput" value=""></input>
 
         {% if request.user == trip.user %}
-            <img src="../../static/argentina/images/icons/pencil-solid.svg" class="mx-3 mb-2 d-inline pencil" id="pencil-title"></i>
+            <img src="../../static/argentina/images/icons/pencil.svg" class="mx-3 mb-2 d-inline pencil" id="pencil-title">
             <button class="btn btn-primary d-none mx-3 mb-2" id="save-btn-title">SAVE</button>
+            <img src="../../static/argentina/images/icons/trash.svg"
+                class="mb-2 d-inline trash"
+                id="trash"
+                data-bs-toggle="modal"
+                data-bs-target="#delete-trip">
+            <div class="modal fade" id="delete-trip" tabindex="-1" aria-labelledby="deletetrip" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Trip</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete this trip?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="conf-delete-trip">Delete</button>
+                    </div>
+                    </div>
+                </div>
+                </div>
         {% endif %}
     </div>
     {% if message %}
@@ -57,19 +79,19 @@
                                             <strong class="d-inline" id="excursion-{{ item.id }}">{{ item.excursion.name }}</strong>
                                             {% if request.user == trip.user %}
                                                 <select class="d-none" id="new-excursion-{{ item.id }}" style="width:40%"></select>
-                                                <img src="../../static/argentina/images/icons/pencil-solid.svg" class="mx-3 mb-2 d-inline pencil" id="pencil-excursion-{{ item.id }}"></i>
+                                                <img src="../../static/argentina/images/icons/pencil.svg" class="mx-3 mb-2 d-inline pencil" id="pencil-excursion-{{ item.id }}"></i>
                                                 <button class="d-none" id="save-btn-excursion-{{ item.id }}">SAVE</button>
                                             {% endif %}
                                             <br><div id="excursion-description-{{ item.id }}">{{ item.excursion.description }}</div>
                                         {% else %}
-                                            <i>No excursions this day</i>
+                                            <i>No excursions this day</i><br>
                                         {% endif %}
                                         {% if item.hotel %}
                                             <br>
                                             <strong class="d-inline" id="hotel-{{ item.id }}">{{ item.hotel.name }}</strong>
                                             {% if request.user == trip.user %}
                                                 <select class="d-none" id="new-hotel-{{ item.id }}" style="width:40%"></select>
-                                                <img src="../../static/argentina/images/icons/pencil-solid.svg" class="mx-3 mb-2 d-inline pencil" id="pencil-hotel-{{ item.id }}"></i>
+                                                <img src="../../static/argentina/images/icons/pencil.svg" class="mx-3 mb-2 d-inline pencil" id="pencil-hotel-{{ item.id }}"></i>
                                                 <button class="d-none" id="save-btn-hotel-{{ item.id }}">SAVE</button>
                                             {% endif %}
                                             <br><div id="hotel-description-{{ item.id }}">{{ item.hotel.description }}</div>
